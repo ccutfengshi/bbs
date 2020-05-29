@@ -19,7 +19,7 @@
 
 ## 工具
 [Git](https://git-scm.com/download)   
-[Visual Paradigm](https://www.visual-paradigm.com)    
+[Visual Paradigm](https://www.visual-paradigm.com)     
 [Flyway](https://flywaydb.org/getstarted/firststeps/maven)  
 [Lombok](https://www.projectlombok.org)    
 [ctotree](https://www.octotree.io/)   
