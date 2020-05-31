@@ -61,7 +61,7 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId())); //使用string。valueof强转一下
             user.setGmtCreate(System.currentTimeMillis()); //用当前的毫秒数传进去
             user.setGmtModified(user.getGmtCreate()); //在create里获取传进去的毫秒值
-            user.setAvatarUrl(githubUser.getAvatar_url());
+            user.setAvatarUrl(githubUser.getAvatarUrl());
             userMapper.insert(user);
             response.addCookie(new Cookie("token",token));
             return "redirect:/";  //跳转到主页
