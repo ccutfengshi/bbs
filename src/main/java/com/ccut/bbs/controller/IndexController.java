@@ -1,6 +1,7 @@
 package com.ccut.bbs.controller;
 
 
+import com.ccut.bbs.dto.PaginationDTO;
 import com.ccut.bbs.dto.QuestionDTO;
 import com.ccut.bbs.mapper.QuestionMapper;
 import com.ccut.bbs.mapper.UserMapper;
@@ -28,7 +29,10 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(HttpServletRequest request,
-                        Model model
+                        Model model,
+                        @RequestParam(name = "page",defaultValue = "1") Integer page,  //传入page。默认值为1，Integer类型
+                        @RequestParam(name = "size",defaultValue = "2") Integer size  //传入页面长度 默认值为5
+
                         ) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length != 0)  //先检验index页面，检验完了再跳转index页面
@@ -43,11 +47,8 @@ public class IndexController {
                 }
             }
 
-        List<QuestionDTO> questionList = questionService.list();
-        for (QuestionDTO questionDTO : questionList) {
-            questionDTO.setDescription("reset");
-        }
-        model.addAttribute("questions",questionList);
+        PaginationDTO pagination = questionService.list(page,size);
+        model.addAttribute("pagination",pagination);
         return "index";
     }
 

@@ -1,5 +1,6 @@
 package com.ccut.bbs.service;
 
+import com.ccut.bbs.dto.PaginationDTO;
 import com.ccut.bbs.dto.QuestionDTO;
 import com.ccut.bbs.mapper.QuestionMapper;
 import com.ccut.bbs.mapper.UserMapper;
@@ -24,10 +25,29 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<QuestionDTO> list() {
-        List<Question> list = questionMapper.list();
+    public PaginationDTO list(Integer page, Integer size) {
+
+        PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalCount = questionMapper.count(); //页面所有的数量
+        paginationDTO.setPagination(totalCount,page,size); //把页面需要展示的元素算出来
+
+        //接下来的两个if是判断，如果当page=4或小于1时的容错处理
+        if (page < 1) {
+            page = 1;
+        }
+
+        if (page > paginationDTO.getTotalPage()) {
+            page = paginationDTO.getTotalPage();
+        }
+
+        //size*(page-1) 分页的公式
+        Integer offset = size * (page - 1);
+
+        List<Question> questions = questionMapper.list(offset,size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-        for (Question question : list) {
+
+
+        for (Question question : questions) {
             User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             //questionDTO.setId(question.getId());  这个方法是最古老的方法，推荐使用下面spring自带的方法
@@ -35,6 +55,8 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        paginationDTO.setQuestions(questionDTOList); //既然用到paginationDTO，就要先把questionDTOList存进去
+
+        return paginationDTO;
     }
 }
