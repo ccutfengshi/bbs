@@ -31,7 +31,7 @@ public class IndexController {
     public String index(HttpServletRequest request,
                         Model model,
                         @RequestParam(name = "page",defaultValue = "1") Integer page,  //传入page。默认值为1，Integer类型
-                        @RequestParam(name = "size",defaultValue = "2") Integer size  //传入页面长度 默认值为5
+                        @RequestParam(name = "size",defaultValue = "5") Integer size  //传入页面长度 默认值为5
 
                         ) {
         Cookie[] cookies = request.getCookies();
