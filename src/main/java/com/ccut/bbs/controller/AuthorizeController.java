@@ -6,6 +6,7 @@ import com.ccut.bbs.dto.GithubUser;
 import com.ccut.bbs.mapper.UserMapper;
 import com.ccut.bbs.model.User;
 import com.ccut.bbs.provider.GithubProvider;
+import com.ccut.bbs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -37,12 +38,11 @@ public class AuthorizeController {
     private String redirectUri = "http://localhost:8887/callback";
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,  //请求参数接收网站的code
                            @RequestParam(name = "state") String state, //请求参数接收网站的state
-                           HttpServletRequest request,
                            HttpServletResponse response
                            ){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
@@ -59,15 +59,27 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId())); //使用string。valueof强转一下
-            user.setGmtCreate(System.currentTimeMillis()); //用当前的毫秒数传进去
-            user.setGmtModified(user.getGmtCreate()); //在create里获取传进去的毫秒值
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            userMapper.insert(user);
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token",token));
             return "redirect:/";  //跳转到主页
         }else {
             //登录失败，重新登录
             return "redirect:/";
         }
+    }
+
+    //登出
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response
+                         ) {
+        //清除session
+        request.getSession().removeAttribute("user");
+        //移除cookie
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }
