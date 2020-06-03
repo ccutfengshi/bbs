@@ -109,4 +109,14 @@ public class QuestionService {
         paginationDTO.setQuestions(questionDTOList); //既然用到paginationDTO，就要先把questionDTOList存进去
         return paginationDTO;
     }
+
+    public QuestionDTO getById(Integer id) {
+        Question question = questionMapper.getById(id); //获取id传到question页面
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        User user = userMapper.findById(question.getCreator()); //获取user
+        questionDTO.setUser(user); //把user发送到question页面
+
+        return questionDTO;
+    }
 }
