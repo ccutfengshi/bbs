@@ -28,17 +28,26 @@ public class QuestionService {
     public PaginationDTO list(Integer page, Integer size) {
 
         PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalPage;
+
         Integer totalCount = questionMapper.count(); //页面所有的数量
-        paginationDTO.setPagination(totalCount,page,size); //把页面需要展示的元素算出来
+
+        if (totalCount % size == 0){
+            totalPage = totalCount / size;
+        }else {
+            totalPage = totalCount / size + 1;
+        }
 
         //接下来的两个if是判断，如果当page=4或小于1时的容错处理
         if (page < 1) {
             page = 1;
         }
 
-        if (page > paginationDTO.getTotalPage()) {
-            page = paginationDTO.getTotalPage();
+        if (page > totalPage) {
+            page = totalPage;
         }
+
+        paginationDTO.setPagination(totalPage,page);
 
         //size*(page-1) 分页的公式
         Integer offset = size * (page - 1);
@@ -57,6 +66,47 @@ public class QuestionService {
         }
         paginationDTO.setQuestions(questionDTOList); //既然用到paginationDTO，就要先把questionDTOList存进去
 
+        return paginationDTO;
+    }
+
+    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+
+        Integer totalPage;
+
+        Integer totalCount = questionMapper.countByUserId(userId); //页面所有的数量
+
+        if (totalCount % size == 0){
+            totalPage = totalCount / size;
+        }else {
+            totalPage = totalCount / size + 1;
+        }
+
+        //接下来的两个if是判断，如果当page=4或小于1时的容错处理
+        if (page < 1) {
+            page = 1;
+        }
+
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        paginationDTO.setPagination(totalPage,page); //把页面需要展示的元素算出来
+
+        //size*(page-1) 分页的公式
+        Integer offset = size * (page - 1);
+        List<Question> questions = questionMapper.listByUserId(userId,offset,size);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+        for (Question question : questions) {
+            User user = userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            //questionDTO.setId(question.getId());  这个方法是最古老的方法，推荐使用下面spring自带的方法
+            BeanUtils.copyProperties(question,questionDTO); //这个工具类的作用是快速把question对象里所有的属性拷贝到questionDTO对象中
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        paginationDTO.setQuestions(questionDTOList); //既然用到paginationDTO，就要先把questionDTOList存进去
         return paginationDTO;
     }
 }

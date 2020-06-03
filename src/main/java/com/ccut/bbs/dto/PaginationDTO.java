@@ -22,26 +22,9 @@ public class PaginationDTO {
 
     /**
      * 计算有多少页可以显示
-     * @param totalCount
-     * @param page
-     * @param size
      */
-    public void setPagination(Integer totalCount, Integer page, Integer size) {
-        if (totalCount % size == 0){
-            totalPage = totalCount / size;
-        }else {
-            totalPage = totalCount / size + 1;
-        }
-
-        //接下来的两个if是判断，如果当page=4或小于1时的容错处理
-        if (page < 1) {
-            page = 1;
-        }
-
-        if (page > totalPage) {
-            page = totalPage;
-        }
-
+    public void setPagination(Integer totalPage, Integer page) {
+        this.totalPage = page;
         this.page = page;
 
         pages.add(page);
