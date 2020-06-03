@@ -33,6 +33,7 @@
  * controller：控制层
  * provider：提供实现
  * dto：即Data Transfer Object，数据传输层
+ * interceptor: 拦截器
  
  ## 脚本
  ```sql
