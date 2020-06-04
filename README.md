@@ -34,6 +34,8 @@
  * provider：提供实现
  * dto：即Data Transfer Object，数据传输层
  * interceptor: 拦截器
+ * advice：当出错时（例如404,500等）回写的信息
+ * exception：自定义的异常包
  
  ## 脚本
  ```sql

@@ -2,6 +2,8 @@ package com.ccut.bbs.service;
 
 import com.ccut.bbs.dto.PaginationDTO;
 import com.ccut.bbs.dto.QuestionDTO;
+import com.ccut.bbs.exception.CustomizeErrorCode;
+import com.ccut.bbs.exception.CustomizeException;
 import com.ccut.bbs.mapper.QuestionMapper;
 import com.ccut.bbs.mapper.UserMapper;
 import com.ccut.bbs.model.Question;
@@ -121,6 +123,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id); //获取id传到question页面
+        if (question == null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator()); //获取user
@@ -146,7 +151,10 @@ public class QuestionService {
             QuestionExample example = new QuestionExample();
             example.createCriteria()
                     .andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion, example);
+            int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
+            if (updated != 1) { //当不等于1的时候，相当于没有更新
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }
