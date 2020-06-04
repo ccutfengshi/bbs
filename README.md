@@ -48,4 +48,9 @@
  );
  ```
 * 注意：h2数据库在被使用的时候是上锁的，无法被其他的东西访问
+
+```bash
+mvn flyway:migrate
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+```
  
