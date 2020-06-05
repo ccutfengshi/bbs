@@ -4,6 +4,7 @@ import com.ccut.bbs.dto.PaginationDTO;
 import com.ccut.bbs.dto.QuestionDTO;
 import com.ccut.bbs.exception.CustomizeErrorCode;
 import com.ccut.bbs.exception.CustomizeException;
+import com.ccut.bbs.mapper.QuestionExtMapper;
 import com.ccut.bbs.mapper.QuestionMapper;
 import com.ccut.bbs.mapper.UserMapper;
 import com.ccut.bbs.model.Question;
@@ -25,6 +26,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired
     private UserMapper userMapper;
@@ -156,5 +160,13 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    //增加阅读数的方法
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }
