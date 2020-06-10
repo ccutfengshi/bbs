@@ -5,9 +5,10 @@ import com.ccut.bbs.exception.CustomizeException;
 import lombok.Data;
 
 @Data
-public class ResultDTO {
+public class ResultDTO<T> {
     private Integer code;  //告诉前端需要用什么显示的（类似4xx这种状态码）
     private String message;  //是在页面发送请求时回写提示的
+    private T data;
 
     public static ResultDTO errorOf(Integer code,String message) {
         ResultDTO resultDTO = new ResultDTO();
@@ -31,5 +32,11 @@ public class ResultDTO {
         return resultDTO;
     }
 
-
+    public static <T> ResultDTO okOf(T t) {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(200);
+        resultDTO.setMessage("请求成功");
+        resultDTO.setData(t);
+        return resultDTO;
+    }
 }

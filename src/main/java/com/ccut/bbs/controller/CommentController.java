@@ -1,7 +1,9 @@
 package com.ccut.bbs.controller;
 
 import com.ccut.bbs.dto.CommentCreateDTO;
+import com.ccut.bbs.dto.CommentDTO;
 import com.ccut.bbs.dto.ResultDTO;
+import com.ccut.bbs.enums.CommentTypeEnum;
 import com.ccut.bbs.exception.CustomizeErrorCode;
 import com.ccut.bbs.model.Comment;
 import com.ccut.bbs.model.User;
@@ -9,12 +11,10 @@ import com.ccut.bbs.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 //评论的controller
 @Controller
@@ -48,5 +48,13 @@ public class CommentController {
         comment.setLikeCount(0L);
         commentService.insert(comment);
         return ResultDTO.okOf();
+    }
+
+    //嵌套评论功能服务端实现
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id) {
+        List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
+        return ResultDTO.okOf(commentDTOS);
     }
 }

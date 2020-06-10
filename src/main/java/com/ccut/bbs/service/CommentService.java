@@ -4,10 +4,7 @@ import com.ccut.bbs.dto.CommentDTO;
 import com.ccut.bbs.enums.CommentTypeEnum;
 import com.ccut.bbs.exception.CustomizeErrorCode;
 import com.ccut.bbs.exception.CustomizeException;
-import com.ccut.bbs.mapper.CommentMapper;
-import com.ccut.bbs.mapper.QuestionExtMapper;
-import com.ccut.bbs.mapper.QuestionMapper;
-import com.ccut.bbs.mapper.UserMapper;
+import com.ccut.bbs.mapper.*;
 import com.ccut.bbs.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +32,9 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CommentExtMapper commentExtMapper;
+
     @Transactional  //这个注解是添加事务的功能
     public void insert(Comment comment) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -52,6 +52,12 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
         }else {
             //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -64,12 +70,12 @@ public class CommentService {
         }
     }
 
-    //
-    public List<CommentDTO> listByQuestionId(Long id) {
+    //评论以及二级评论的服务端实现
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andTypeEqualTo(type.getType());
         commentExample.setOrderByClause("gmt_create desc"); //按照创建时间倒序排列问题
         List<Comment> comments = commentMapper.selectByExample(commentExample);
 

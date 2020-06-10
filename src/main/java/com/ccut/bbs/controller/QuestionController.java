@@ -1,8 +1,8 @@
 package com.ccut.bbs.controller;
 
-import com.ccut.bbs.dto.CommentCreateDTO;
 import com.ccut.bbs.dto.CommentDTO;
 import com.ccut.bbs.dto.QuestionDTO;
+import com.ccut.bbs.enums.CommentTypeEnum;
 import com.ccut.bbs.service.CommentService;
 import com.ccut.bbs.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class QuestionController {
 
         QuestionDTO questionDTO = questionService.getById(id);
 
-        List<CommentDTO> comments =  commentService.listByQuestionId(id);
+        List<CommentDTO> comments =  commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
 
         //累加阅读数
         questionService.incView(id);
