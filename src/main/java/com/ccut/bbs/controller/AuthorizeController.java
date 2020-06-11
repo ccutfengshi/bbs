@@ -3,7 +3,6 @@ package com.ccut.bbs.controller;
 
 import com.ccut.bbs.dto.AccessTokenDTO;
 import com.ccut.bbs.dto.GithubUser;
-import com.ccut.bbs.mapper.UserMapper;
 import com.ccut.bbs.model.User;
 import com.ccut.bbs.provider.GithubProvider;
 import com.ccut.bbs.service.UserService;
